@@ -12,7 +12,7 @@
                                     <li class="w-icon active">
                                         <a href="#"><i class="icon_bag_alt"></i></a>
                                     </li>
-                                    <li class="quick-view"><a href="product.html">+ Quick View</a></li>
+                                    <li class="quick-view"><router-link to="/product">+ Quick View</router-link></li>
                                 </ul>
                             </div>
                             <div class="pi-text">
