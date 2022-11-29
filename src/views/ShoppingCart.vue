@@ -105,7 +105,7 @@
                                         <li class="subtotal mt-3">No. Rekening <span>2208 1996 1403</span></li>
                                         <li class="subtotal mt-3">Nama Penerima <span>Shayna</span></li>
                                     </ul>
-                                    <a href="success.html" class="proceed-btn">I ALREADY PAID</a>
+                                    <router-link to="/success" href="success.html" class="proceed-btn">I ALREADY PAID</router-link>
                                 </div>
                             </div>
                         </div>
