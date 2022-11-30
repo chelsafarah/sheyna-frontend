@@ -37,27 +37,15 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
+                                            <tr v-for="product in keranjangUser" :key="product.id">
                                                 <td class="cart-pic first-row">
-                                                    <img src="img/cart-page/product-1.jpg" />
+                                                    <img class="img-card" :src="product.photo" />
                                                 </td>
                                                 <td class="cart-title first-row text-center">
-                                                    <h5>Pure Pineapple</h5>
+                                                    <h5>{{ product.name }}</h5>
                                                 </td>
-                                                <td class="p-price first-row">$60.00</td>
-                                                <td class="delete-item"><a href="#"><i class="material-icons">
-                                                close
-                                                </i></a></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="cart-pic first-row">
-                                                    <img src="img/cart-page/product-1.jpg" />
-                                                </td>
-                                                <td class="cart-title first-row text-center">
-                                                    <h5>Pure Pineapple</h5>
-                                                </td>
-                                                <td class="p-price first-row">$60.00</td>
-                                                <td class="delete-item"><a href="#"><i class="material-icons">
+                                                <td class="p-price first-row">${{ product.price }}</td>
+                                                <td class="delete-item"><a @click="removeItem(keranjangUser.index)" href="/cart"><i class="material-icons">
                                                 close
                                                 </i></a></td>
                                             </tr>
@@ -127,8 +115,36 @@
     name: 'ShoppingCart',
     components: {
       HeaderComponent,
+    },
+    data() {
+        return {
+            keranjangUser: []
+        }
+    },
+    methods: {
+        removeItem(index) {
+            this.keranjangUser.splice(index, 1);
+            const parsed = JSON.stringify(this.keranjangUser);
+            localStorage.setItem('keranjangUser', parsed);
+        }
+    },
+    mounted() {
+        if(localStorage.getItem('keranjangUser')) {
+            try {
+                this.keranjangUser = JSON.parse(localStorage.getItem('keranjangUser'));
+            } catch (error) {
+                localStorage.removeItem('keranjangUser');
+            }
+        }
     }
   }
   </script>
+
+<style scoped>
+    .img-card {
+        width: 100px;
+        height: 100px;
+    }
+</style>
   
   
