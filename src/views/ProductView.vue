@@ -54,7 +54,9 @@
                                         <h4>${{ productDetails.price }}</h4>
                                     </div>
                                     <div class="quantity">
-                                        <router-link to="/cart" class="primary-btn pd-cart">Add To Cart</router-link>
+                                        <router-link to="/cart">
+                                            <a @click="saveKeranjang(productDetails.id, productDetails.name, productDetails.price, (productDetails.galleries.length > 0? productDetails.galleries[0].photo : 'img/logo2.png') )" class="primary-btn pd-cart" >Add To Cart</a>
+                                        </router-link>
                                     </div>
                                 </div>
                             </div>
@@ -93,6 +95,7 @@
         return {
             photo_product: "",
             productDetails: [],
+            keranjangUser: []
         }
     },
     methods: {
@@ -101,18 +104,38 @@
         },
         setData(data) {
             this.productDetails = data;
-            this.photo_product = data.galleries[0].photo;
+            console.log(this.productDetails.galleries.length);
+            this.photo_product = (data.galleries.length > 0? data.galleries[0].photo : '');
+        },
+        saveKeranjang(idProduct, nameProduct, priceProduct, photoProduct){
+            var productStored = {
+                'id': idProduct,
+                'name': nameProduct,
+                'price': priceProduct,
+                'photo': photoProduct
+            }
+            this.keranjangUser.push(productStored);
+            console.log(this.keranjangUser);
+            const parsed = JSON.stringify(this.keranjangUser);
+            localStorage.setItem('keranjangUser', parsed);
         }
     },
     mounted() {
-    axios
-        .get("http://127.0.0.1:8000/api/products", {
-            params: {
-                id: this.$route.params.id
+        if(localStorage.getItem('keranjangUser')) {
+            try {
+                this.keranjangUser = JSON.parse(localStorage.getItem('keranjangUser'));
+            } catch (error) {
+                localStorage.removeItem('keranjangUser');
             }
-        })
-        .then(res => (this.setData(res.data.data)))
-        .catch(err => console.log(err));
+        }
+        axios
+            .get("http://127.0.0.1:8000/api/products", {
+                params: {
+                    id: this.$route.params.id
+                }
+            })
+            .then(res => (this.setData(res.data.data)))
+            .catch(err => console.log(err));
     }
   }
 </script>
