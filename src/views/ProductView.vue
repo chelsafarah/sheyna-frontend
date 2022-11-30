@@ -24,45 +24,34 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="product-pic-zoom">
-                                    <img class="product-big-img" :src="photo_product" alt="" />
+                                    <div v-if="(photo_product != '')">
+                                        <img class="product-big-img" :src="photo_product" alt="" />
+                                    </div>
+                                    <div v-else>
+                                        <img class="product-big-img" src="img/logo2.png" alt="" />
+                                    </div>
+                                    
                                 </div>
-                                <div class="product-thumbs">
+                                <div class="product-thumbs" v-if="(productDetails.galleries != null)">
                                     <Carousel class="product-thumbs-track ps-slider" :items-to-show="3" >
-                                        <Slide class="pt" @click="changeImage(thumbs[0])" :class="thumbs[0] == photo_product ? 'active' : '' ">
-                                            <img src="img/mickey1.jpg" alt="" />
-                                        </Slide>
-
-                                        <Slide class="pt" @click="changeImage(thumbs[1])" :class="thumbs[1] == photo_product ? 'active' : '' ">
-                                            <img src="img/mickey2.jpg" alt="" />
-                                        </Slide>
-
-                                        <Slide class="pt" @click="changeImage(thumbs[2])" :class="thumbs[2] == photo_product ? 'active' : '' ">
-                                            <img src="img/mickey3.jpg" alt="" />
-                                        </Slide>
-
-                                        <Slide class="pt" @click="changeImage(thumbs[3])" :class="thumbs[3] == photo_product ? 'active' : '' ">
-                                            <img src="img/mickey4.jpg" alt="" />
-                                        </Slide>
+                                        <div v-for="gallery in productDetails.galleries" v-bind:key="gallery.id"> 
+                                            <Slide class="pt" @click="changeImage(gallery.photo)" :class="gallery.photo == photo_product ? 'active' : '' ">
+                                                <img v-bind:src="gallery.photo" alt="" />
+                                            </Slide>
+                                        </div>
                                     </Carousel>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="product-details text-left">
                                     <div class="pd-title">
-                                        <span>oranges</span>
-                                        <h3>Pure Pineapple</h3>
+                                        <span>{{ productDetails.type }}</span>
+                                        <h3>{{ productDetails.name }}</h3>
                                     </div>
                                     <div class="pd-desc">
-                                        <p>
-                                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis, error officia. Rem aperiam laborum voluptatum vel, pariatur modi hic provident eum iure natus quos non a sequi, id accusantium! Autem.
+                                        <p v-html="productDetails.description">
                                         </p>
-                                        <p>
-                                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam possimus quisquam animi, commodi, nihil voluptate nostrum neque architecto illo officiis doloremque et corrupti cupiditate voluptatibus error illum. Commodi expedita animi nulla aspernatur.
-                                            Id asperiores blanditiis, omnis repudiandae iste inventore cum, quam sint molestiae accusamus voluptates ex tempora illum sit perspiciatis. Nostrum dolor tenetur amet, illo natus magni veniam quia sit nihil dolores.
-                                            Commodi ratione distinctio harum voluptatum velit facilis voluptas animi non laudantium, id dolorem atque perferendis enim ducimus? A exercitationem recusandae aliquam quod. Itaque inventore obcaecati, unde quam
-                                            impedit praesentium veritatis quis beatae ea atque perferendis voluptates velit architecto?
-                                        </p>
-                                        <h4>$495.00</h4>
+                                        <h4>${{ productDetails.price }}</h4>
                                     </div>
                                     <div class="quantity">
                                         <router-link to="/cart" class="primary-btn pd-cart">Add To Cart</router-link>
@@ -89,7 +78,8 @@
 
   import 'vue3-carousel/dist/carousel.css';
   import { Carousel, Slide} from 'vue3-carousel'
-  
+  import axios from "axios";
+
   export default {
     name: 'ProductView',
     components: {
@@ -101,19 +91,28 @@
     },
     data() {
         return {
-            photo_product: "img/mickey1.jpg",
-            thumbs: [
-                "img/mickey1.jpg",
-                "img/mickey2.jpg",
-                "img/mickey3.jpg",
-                "img/mickey4.jpg",
-            ]
+            photo_product: "",
+            productDetails: [],
         }
     },
     methods: {
         changeImage(urlImage) {
             this.photo_product = urlImage;
+        },
+        setData(data) {
+            this.productDetails = data;
+            this.photo_product = data.galleries[0].photo;
         }
+    },
+    mounted() {
+    axios
+        .get("http://127.0.0.1:8000/api/products", {
+            params: {
+                id: this.$route.params.id
+            }
+        })
+        .then(res => (this.setData(res.data.data)))
+        .catch(err => console.log(err));
     }
   }
 </script>
@@ -121,6 +120,10 @@
 <style scoped>
     .product-thumbs .pt{
         margin-right: 10px;
+    }
+
+    .product-big-img {
+        max-width: 300px;
     }
 </style>
   
