@@ -42,7 +42,7 @@
                                                     </td>
                                                     <td class="si-text">
                                                         <div class="product-selected">
-                                                            <p>${{ keranjang.price }}</p>
+                                                            <p>${{ keranjang.price }} x 1</p>
                                                             <h6>{{ keranjang.name }}</h6>
                                                         </div>
                                                     </td>
@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="select-total">
                                         <span>total:</span>
-                                        <h5>$120.00</h5>
+                                        <h5>${{ totalPrice }}.00</h5>
                                     </div>
                                     <div class="select-button">
                                         <router-link to="/cart" href="#" class="primary-btn view-card">VIEW CARD</router-link>
@@ -99,6 +99,13 @@ export default {
             } catch (error) {
                 localStorage.removeItem('keranjangUser');
             }
+        }
+    },
+    computed: {
+        totalPrice() {
+            return this.keranjangUser.reduce(function(items, data){
+                return items + data.price;
+            }, 0)
         }
     }
 }
